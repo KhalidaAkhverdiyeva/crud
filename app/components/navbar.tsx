@@ -1,17 +1,29 @@
+'use client'
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation'
 
 const Navbar = () => {
+
+    const pathname = usePathname()
+    console.log(pathname)
+
+   
   return (
     <nav className="bg-white shadow-md py-4 px-[50px] flex justify-between items-center">
    
-      <div className="flex items-center gap-[50px]">
+      <div className="flex items-center gap-[100px]">
       <img src="./trimmed.png" alt="/"  className="h-[50px]"/>
-        <ul className="flex space-x-6">
-          <li><a href="#blog" className="text-gray-700 font-bold hover:text-gray-900">Blog</a></li>
-          <li><a href="#products" className="text-gray-700 hover:text-gray-900">Products</a></li>
-          <li><a href="#contact" className="text-gray-700 hover:text-gray-900">Contact</a></li>
-          <li><a href="#about" className="text-gray-700 hover:text-gray-900">About</a></li>
+        <ul className="flex gap-[50px] font-[400] text-[16px]">
+          <li><a href="/home" className={`text-black hover:text-[#E3411A] transition-colors duration-400 ${
+            pathname === 'home' ? 'text-[#E3411A]' : ''
+          }`}>Blog</a></li>
+          <li><a href="/products" className={`text-black hover:text-[#E3411A] transition-colors duration-400 ${
+            pathname === 'products' ? 'text-[#E3411A]' : ''
+          }`}>Products</a></li>
+          <li><a href="/contact" className="text-black hover:text-[#E3411A] transition-colors duration-400">Contact</a></li>
+          <li><a href="/about" className="text-black hover:text-[#E3411A] transition-colors duration-400">About</a></li>
+          <li><a href="/services" className="text-black hover:text-[#E3411A] transition-colors duration-400">Services</a></li>
         </ul>
       </div>
 
@@ -24,7 +36,7 @@ const Navbar = () => {
           alt="Profile"
           width={100}
           height={100}
-          className="w-[60px] h-[60px] rounded-full object-cover border shadow cursor-pointer"
+          className="w-[50px] h-[50px] rounded-full object-cover border shadow cursor-pointer"
         />
       </div>
     </nav>
