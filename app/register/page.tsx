@@ -1,29 +1,54 @@
-// pages/register.js
+
 "use client";
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import FileUploadInput from '../components/fileuploadinput';
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    gender: '',
-    password: '',
-    confirmPassword: '',
-    email: '',
-    username: ''
-  });
-
-  const router = useRouter();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
   
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      gender: '',
+      profileImage: null,
+    },
+    validationSchema: Yup.object({
+      firstName: Yup.string().required('First name is required'),
+      lastName: Yup.string().required('Last name is required'),
+      username: Yup.string().required('Username is required'),
+      email: Yup.string().required('Email is required'),
+      password: Yup.string().required('Password is required'),
+      confirmPassword: Yup.string().required('Confirm password is required'),
+      gender: Yup.string().required('Gender is required'),
+      profileImage: Yup.mixed().required('Profile image is required'),
+    }),
+    onSubmit: (values) => {
+      console.log('Form values:', values);
+
+      formik.resetForm(); 
+    },
+  });
+ 
+
+  const handleFileChange = (e:any ) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        formik.setFieldValue('profileImage', reader.result); 
+      };
+      reader.readAsDataURL(file);
+    } else {
+      formik.setFieldValue('profileImage', null); 
+    }
   };
 
   return (
@@ -35,14 +60,14 @@ export default function RegisterPage() {
    
       <div className="w-1/2 flex flex-col items-center justify-center p-8">
         <h1 className="text-2xl font-bold mb-6">Registration</h1>
-        <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
+        <form onSubmit={formik.onSubmit} className="w-full max-w-lg space-y-6">
     
           <div className="flex gap-4">
             <input
               type="text"
               name="firstName"
-              value={form.firstName}
-              onChange={handleChange}
+              value={formik.values.firstName}
+              onChange={formik.handleChange}
               placeholder="First Name"
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
               required
@@ -50,8 +75,8 @@ export default function RegisterPage() {
             <input
               type="text"
               name="lastName"
-              value={form.lastName}
-              onChange={handleChange}
+              value={formik.values.lastName}
+              onChange={formik.handleChange}
               placeholder="Last Name"
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
               required
@@ -60,8 +85,8 @@ export default function RegisterPage() {
           <input
             type="text"
             name="username"
-            value={form.username}
-            onChange={handleChange}
+            value={formik.values.username}
+            onChange={formik.handleChange}
             placeholder="Username"
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
@@ -69,8 +94,8 @@ export default function RegisterPage() {
           <input
             type="email"
             name="email"
-            value={form.email}
-            onChange={handleChange}
+            value={formik.values.email}
+            onChange={formik.handleChange}
             placeholder="Email"
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
@@ -79,8 +104,8 @@ export default function RegisterPage() {
           <input
             type="password"
             name="password"
-            value={form.password}
-            onChange={handleChange}
+            value={formik.values.password}
+            onChange={formik.handleChange}
             placeholder="Password"
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
@@ -90,8 +115,8 @@ export default function RegisterPage() {
           <input
             type="password"
             name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleChange}
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
             placeholder="Confirm Password"
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
@@ -102,8 +127,8 @@ export default function RegisterPage() {
                 type="radio"
                 name="gender"
                 value="male"
-                checked={form.gender === 'male'}
-                onChange={handleChange}
+                checked={formik.values.gender === 'male'}
+                onChange={formik.handleChange}
                 className="mr-2 "
                 required
               />
@@ -114,8 +139,8 @@ export default function RegisterPage() {
                 type="radio"
                 name="gender"
                 value="female"
-                checked={form.gender === 'female'}
-                onChange={handleChange}
+                checked={formik.values.gender === 'female'}
+                onChange={formik.handleChange}
                 className="mr-2"
                 required
               />
@@ -127,15 +152,18 @@ export default function RegisterPage() {
                 type="radio"
                 name="gender"
                 value="Prefer not to say"
-                checked={form.gender === 'Prefer not to say'}
-                onChange={handleChange}
+                checked={formik.values.gender === 'Prefer not to say'}
+                onChange={formik.handleChange}
                 className="mr-2 "
                 required
               />
               Prefer not to say
             </label>
           </div>
-          <input type="file" placeholder='Profile Image' className='w-full px-4 py-2 border border-gray-300 rounded-md' />
+          <FileUploadInput 
+              name = 'profileImage'
+              onChange={handleFileChange}
+              value={formik.values.profileImage}/>
           
 
           <button
