@@ -52,15 +52,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="flex justify-center items-center ">
+    <main className="flex justify-center items-center">
       <div className='w-[1200px] h-[650px] flex justify-center items-center overflow-hidden shadow-md mt-[30px] border'>
       <div className="w-1/2 bg-gray-100">
         <img src="https://i.pinimg.com/564x/72/81/56/7281562b52b07a6a180c14fd0dfdf5a0.jpg" alt="Registration" className="object-cover w-full h-full" />
       </div>
    
-      <div className="w-1/2 flex flex-col items-center justify-center p-8">
+      <div className="w-1/2 flex flex-col items-center justify-center p-8 bg-white">
         <h1 className="text-2xl font-bold mb-6">Registration</h1>
-        <form onSubmit={formik.onSubmit} className="w-full max-w-lg space-y-6">
+        <form onSubmit={formik.onSubmit} className="w-full max-w-lg space-y-6 ">
     
           <div className="flex gap-4">
             <input

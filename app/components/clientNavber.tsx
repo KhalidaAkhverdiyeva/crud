@@ -9,5 +9,5 @@ export default function ClientNavbar() {
   const pathname = usePathname();
   
  
-  return pathname !== '/' ? <Navbar /> : null;
+  return pathname !== '/' && pathname !== '/register' ? <Navbar /> : null;
 }
