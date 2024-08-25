@@ -1,8 +1,10 @@
+import Table from 'app/components/table'
 import React from 'react'
 
 const Products = () => {
   return (
-    <div>Products</div>
+    <div className='flex justify-center bg-[#FAF4F4]'><Table/></div>
+    
   )
 }
 

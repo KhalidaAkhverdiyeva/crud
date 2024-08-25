@@ -8,8 +8,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   description,
   rating,
   price,
-  tag1,
-  tag2
+  tags,
 }) => {
 
   const stars = Array.from({ length: 5 }, (_, index) => index < rating ? '★' : '☆').join('');
@@ -25,9 +24,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </div>
       <p className="text-lg font-bold mb-2">{price}$</p>
       <div className='flex gap-2'>
-      <span className="bg-[#EA580C] text-white px-2 py-1 rounded-full text-[12px]">{tag1}</span>
-      {tag2 && <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-[12px]">{tag2}</span> }
-      
+      <span className="bg-[#fcd9c672] text-[#EA580C] px-2 py-1 font-[500] rounded-[6px] text-[12px]">{tags}</span>
       </div>
       
     </div>

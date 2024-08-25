@@ -33,8 +33,8 @@ const FileUploadInput: React.FC<{
         htmlFor="fileInput"
         className="block w-[70px] h-[70px] bg-[#F6F7F8] rounded-full cursor-pointer relative overflow-hidden"
         style={{
-            backgroundImage: `url('https://i.pinimg.com/736x/8f/e4/18/8fe41808e1d9199dc4283de93e8bb36b.jpg')`,  
-            backgroundSize: 'contain',
+           backgroundImage: `url('https://i.pinimg.com/736x/8f/e4/18/8fe41808e1d9199dc4283de93e8bb36b.jpg')`,  
+           backgroundSize: 'contain',
            backgroundPosition: 'center',
            backgroundRepeat: 'no-repeat'
         }}

@@ -1,11 +1,17 @@
 'use client'
 import Image from 'next/image';
 import { usePathname } from 'next/navigation'
+import { useState } from 'react';
+import AddCardModal from './addCardModal';
 
 const Navbar = () => {
 
     const pathname = usePathname()
-    console.log(pathname,'heeeeyo')
+
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+    const openModal = () => setIsModalOpen(true)
+    const closeModal = () => setIsModalOpen(false);
+    
 
   return (
     <nav className="bg-white shadow-md py-4 px-[50px] flex justify-between items-center">
@@ -22,9 +28,10 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center space-x-[30px]">
-        <button className="bg-[#E3411A] text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">
+        <button onClick={openModal} className="bg-[#E3411A] text-white px-4 py-2 rounded-md hover:bg-orange-600 transition">
           Create Card
         </button>
+        {isModalOpen && <AddCardModal onClose={closeModal} />}
         <Image
           src="/ava.webp"
           alt="Profile"
