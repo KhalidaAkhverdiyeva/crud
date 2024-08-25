@@ -1,57 +1,35 @@
+
+'use client'
 import React from 'react'
 import ProductCard from '../components/productcard';
+import useSWR from 'swr';
+import { fetcher } from 'app/http/fetcher';
 
 const HomePage = () => {
-  const product = {
-    image: 'https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/1.png',
-    title: 'Sample Product',
-    description: 'This is a short description of the product.',
-    rating: 4,
-    price: '$29.99',
-    tag: 'Beauty'
-  };
+
+  const {data, error} = useSWR("https://dummyjson.com/products",fetcher)
+  console.log()
+  if (error) return <p>Error happened</p>
+  if(!data) return <p>Loading..</p>
   return (
     <div className="px-[50px] py-[50px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-[#f4f3f2]">
-      <ProductCard
-        image={product.image}
+
+      {data.products.map((product:any)=> {
+        return  <ProductCard
+        key={product.id}
+        image={product.images}
         title={product.title}
         description={product.description}
         rating={product.rating}
         price={product.price}
-        tag={product.tag}
+        tag1={product.tags[0]}
+        tag2={product.tags[1]}
       />
-      <ProductCard
-        image={product.image}
-        title={product.title}
-        description={product.description}
-        rating={product.rating}
-        price={product.price}
-        tag={product.tag}
-      />
-      <ProductCard
-        image={product.image}
-        title={product.title}
-        description={product.description}
-        rating={product.rating}
-        price={product.price}
-        tag={product.tag}
-      />
-      <ProductCard
-        image={product.image}
-        title={product.title}
-        description={product.description}
-        rating={product.rating}
-        price={product.price}
-        tag={product.tag}
-      />
-      <ProductCard
-        image={product.image}
-        title={product.title}
-        description={product.description}
-        rating={product.rating}
-        price={product.price}
-        tag={product.tag}
-      />
+        
+
+      })}
+     
+     
       
     </div>
   );

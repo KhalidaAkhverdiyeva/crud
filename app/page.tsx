@@ -1,8 +1,8 @@
 "use client";
-import { useRequestMutation } from "./_http/axiosFetcher";
+
 import LoadingButton from "./components/loadingbutton";
 import { useFormik } from "formik";
-import { LoginValidationSchema } from "./_validator/LoginValidation";
+import { LoginValidationSchema } from "./validator/LoginValidation";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import ErrorMessage from "./components/errormessage";
@@ -15,17 +15,9 @@ import Link from "next/link";
 
 export default function DefaulPage() {
   const router = useRouter();
-  const {
-    trigger: loginservice,
-    isMutating: loaading,
-    error: isErr,
-  } = useRequestMutation("login", {
-    method: "POST",
-    module: "devApi",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const InitialForm = {
     username: "",
@@ -36,18 +28,34 @@ export default function DefaulPage() {
   const formik = useFormik({
     initialValues: InitialForm,
     validationSchema: LoginValidationSchema,
-    onSubmit: (values) => {
-      loginservice({
-        body: values,
-      }).then((res) => {
+    onSubmit: async (values) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('https://dummyjson.com/auth/login', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+
+        const res = await response.json();
+
         if (res?.token) {
           setCookie("token", res.token, {
             expires: new Date(Date.now() + values.expiresInMins * 60000),
           });
 
           router.push("/home");
+        } else {
+          setError("Invalid login credentials.");
         }
-      });
+      } catch (err) {
+        setError("An error occurred while logging in.");
+      } finally {
+        setLoading(false);
+      }
     },
   });
   const [showPassword,setShowPassword] = useState(false)
@@ -56,7 +64,7 @@ export default function DefaulPage() {
     <main className="flex   flex-col items-center  justify-between p-24"
     >
       <img src="./noodle.png" alt="/"  className="h-[100px]"/>
-      {isErr && <ErrorMessage message={isErr.message} />}
+      {error && <ErrorMessage message={error} />}
       <form
         id="login"
         onSubmit={formik.handleSubmit}
@@ -104,7 +112,7 @@ export default function DefaulPage() {
           id="login"
           className="w-full flex items-center justify-center gap-2 p-3 my-2 bg-[#E3411A] text-white rounded-sm shadow-md"
         >
-          {loaading ? <LoadingButton /> : "Login"}
+          {loading ? <LoadingButton /> : "Login"}
         </button>
         <div className="flex gap-[15px] items-center justify-center mt-[30px]">
           <div className="bg-gray-300 h-[1px] w-[100%]"></div>
