@@ -25,6 +25,7 @@ const Table = () => {
         tags: '',
         image: null
     });
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const handleEdit = (id: number) => {
         setEditingId(id);
@@ -36,7 +37,7 @@ const Table = () => {
                 rating: product.rating,
                 price: product.price,
                 tags: product.tags,
-                image: null // Reset image for editing
+                image: null 
             });
         }
     };
@@ -45,10 +46,10 @@ const Table = () => {
         try {
             const updatedProduct = { ...formValues };
             if (formValues.image) {
-                // Handle image upload logic here if needed
+                
             }
             await updateProduct(id, updatedProduct);
-            mutate(); // Refresh the SWR data
+            mutate();
             setEditingId(null);
         } catch (error) {
             console.error("Error saving product", error);
@@ -87,21 +88,6 @@ const Table = () => {
             console.error("Error deleting product", error);
         }
     };
-
-    const handleAddProduct = async () => {
-        try {
-            const newProductData = { ...newProduct };
-            if (newProduct.image) {
-                // Handle image upload logic here if needed
-            }
-            await createProduct(newProductData);
-            mutate(); // Refresh the SWR data
-            setNewProduct({ name: '', description: '', rating: 1, price: '', tags: '', image: null }); // Reset form
-        } catch (error) {
-            console.error("Error adding product", error);
-        }
-    };
-
     if (error) return <p>Error happened</p>;
     if (!products) return <div><LoadingSpinner /></div>;
 
@@ -122,17 +108,20 @@ const Table = () => {
                         <tr key={product.id}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 <div className='flex gap-[10px] items-center'>
-                                {editingId === product.id ? (
+                                <div className="relative w-12 h-12">
                                     <input
                                         type="file"
                                         name="image"
                                         accept="image/*"
                                         onChange={handleFileChange}
-                                        className="border border-gray-300 p-1 rounded"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
                                     />
-                                ) : (
-                                    <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded-full" />
-                                )}
+                                    <img
+                                        src={previewUrl || product.image}
+                                        alt={product.title}
+                                        className="w-full h-full object-cover rounded-full"
+                                    />
+                                </div>
                                 {editingId === product.id ? (
                                     <input
                                         type="text"

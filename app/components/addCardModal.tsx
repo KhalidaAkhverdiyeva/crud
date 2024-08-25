@@ -1,11 +1,12 @@
-import { createProduct } from '../http/fetcher';
+import { Product } from 'app/types/product';
+import { createProduct, fetcher } from '../http/fetcher';
 import { validationSchema } from 'app/validator/AddCardValidation';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
-import { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 
 const AddCardModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { mutate } = useSWRConfig();
+    const { mutate } = useSWR<Product[]>("http://localhost:3001/products", fetcher);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const handleSubmit = async (values: any, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
@@ -22,8 +23,7 @@ const AddCardModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             };
 
             const response = await createProduct(newProduct);
-            console.log('Product added:', response);
-            mutate("https://dummyjson.com/products", undefined, { revalidate: true });
+            mutate();
             onClose();
         } catch (error) {
             console.error("Error adding product:", error);
