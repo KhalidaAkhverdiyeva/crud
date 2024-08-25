@@ -10,7 +10,7 @@ const Table = () => {
     const { data: products, error, mutate } = useSWR<Product[]>("http://localhost:3001/products", fetcher);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [formValues, setFormValues] = useState<FormValues>({
-        name: '',
+        title: '',
         description: '',
         rating: 1,
         price: '',
@@ -32,7 +32,7 @@ const Table = () => {
         const product = products?.find(p => p.id === id);
         if (product) {
             setFormValues({
-                name: product.title,
+                title: product.title,
                 description: product.description,
                 rating: product.rating,
                 price: product.price,
@@ -65,9 +65,27 @@ const Table = () => {
         setFormValues(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>, productId: number) => {
         const file = e.target.files ? e.target.files[0] : null;
-        setFormValues(prev => ({ ...prev, image: file }));
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormValues(prevValues => ({
+                    ...prevValues,
+                    [productId]: {
+                        ...prevValues[productId],
+                        image: reader.result as string,
+                    }
+                }));
+            };
+            reader.readAsDataURL(file);
+        }else{
+            setFormValues(prev => ({
+                ...prev,
+                image: null
+            }));
+            setPreviewUrl(null);
+        }
     };
 
     const handleNewProductChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -113,11 +131,11 @@ const Table = () => {
                                         type="file"
                                         name="image"
                                         accept="image/*"
-                                        onChange={handleFileChange}
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        onChange={(e) => handleFileChange(e, product.id)}
+                                        className="absolute  opacity-0 cursor-pointer"
                                     />
                                     <img
-                                        src={previewUrl || product.image}
+                                        src={formValues[product.id]?.previewUrl || product.image}
                                         alt={product.title}
                                         className="w-full h-full object-cover rounded-full"
                                     />
@@ -125,10 +143,10 @@ const Table = () => {
                                 {editingId === product.id ? (
                                     <input
                                         type="text"
-                                        name="name"
-                                        value={formValues.name}
+                                        name="title"
+                                        value={formValues.title}
                                         onChange={handleChange}
-                                        className="border border-gray-300 p-1 rounded"
+                                        className="border border-gray-300 p-1 rounded w-[120px]"
                                     />
                                 ) : (
                                         product.title
@@ -144,7 +162,7 @@ const Table = () => {
                                         name="description"
                                         value={formValues.description}
                                         onChange={handleChange}
-                                        className="border border-gray-300 p-1 rounded text-[14px]"
+                                        className="border border-gray-300 p-1 rounded text-[14px] w-[400px]"
                                     />
                                 ) : (
                                     product.description
@@ -178,7 +196,7 @@ const Table = () => {
                                         name="price"
                                         value={formValues.price}
                                         onChange={handleChange}
-                                        className="border border-gray-300 p-1 rounded"
+                                        className="border border-gray-300 p-1 rounded w-[50px]"
                                     />
                                 ) : (
                                     <div className="flex items-center">
@@ -195,7 +213,7 @@ const Table = () => {
                                         name="tags"
                                         value={formValues.tags}
                                         onChange={handleChange}
-                                        className="border border-gray-300 p-1 rounded"
+                                        className="border border-gray-300 p-1 rounded w-[100px]"
                                     />
                                 ) : (
                                     product.tags

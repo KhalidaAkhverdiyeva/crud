@@ -54,7 +54,7 @@ const AddCardModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center" style={{ marginLeft: '0', marginRight: '0' }}>
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center" style={{ marginLeft: '0', marginRight: '0' , zIndex: 999 }}>
             <div className="bg-white p-6 rounded-lg w-full max-w-md relative">
                 <button 
                     className="absolute top-3 right-3 text-gray-500 text-[30px] hover:text-gray-800"

@@ -1,6 +1,8 @@
 // import { useFormik } from 'formik';
 // yup
 
+import { ChangeEvent } from "react";
+
 
 // const formik = useFormik({
 //     initialValues: {
@@ -27,15 +29,3 @@
 //   });
 
 
-// const handleFileChange = (e) => {
-//     const file = e.target.files[0];
-//     if (file) {
-//       const reader = new FileReader();
-//       reader.onloadend = () => {
-//         Formik.setFieldValue('file', reader.result);
-//       };
-//       reader.readAsDataURL(file);
-//     } else {
-//       formik.setFieldValue('file', null);
-//     }
-//   };
