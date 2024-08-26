@@ -1,10 +1,10 @@
 export interface FormValues {
-    [key: number]: {
-        image: string;
+    
+        image: string | File | null;
         title: string;
         description: string;
         price: string;
         rating: number;
         tags: string;
-    }
+    
 }

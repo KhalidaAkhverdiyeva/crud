@@ -13,7 +13,7 @@ export const createProduct = async (newProduct: any) => {
     return response.json();
 };
 
-export const updateProduct = async (id: number, updatedProduct: any) => {
+export const updateProduct = async (id: number, updatedProduct: FormData) => {
     const response = await fetch(`${apiUrl}/${id}`, {
         method: "PUT",
         headers: {

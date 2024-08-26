@@ -18,7 +18,7 @@ const Table = () => {
         image: null
     });
     const [newProduct, setNewProduct] = useState<FormValues>({
-        name: '',
+        title: '',
         description: '',
         rating: 1,
         price: '',
@@ -26,6 +26,8 @@ const Table = () => {
         image: null
     });
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
     const handleEdit = (id: number) => {
         setEditingId(id);
@@ -44,12 +46,20 @@ const Table = () => {
 
     const handleSave = async (id: number) => {
         try {
-            const updatedProduct = { ...formValues };
-            if (formValues.image) {
-                
-            }
+ 
+            const { image, ...otherFields } = formValues;
+    
+        
+            const updatedProduct = {
+                ...otherFields,
+                image: image ? image : undefined, 
+            };
+    
             await updateProduct(id, updatedProduct);
+
             mutate();
+    
+     
             setEditingId(null);
         } catch (error) {
             console.error("Error saving product", error);
@@ -65,33 +75,28 @@ const Table = () => {
         setFormValues(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>, productId: number) => {
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;
         if (file) {
+            setFormValues(prevValues => ({
+                ...prevValues,
+                image: file, 
+            }));
+    
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormValues(prevValues => ({
-                    ...prevValues,
-                    [productId]: {
-                        ...prevValues[productId],
-                        image: reader.result as string,
-                    }
-                }));
+                setPreviewUrl(reader.result as string); 
             };
             reader.readAsDataURL(file);
-        }else{
+        } else {
             setFormValues(prev => ({
                 ...prev,
-                image: null
+                image: null,
             }));
             setPreviewUrl(null);
         }
     };
 
-    const handleNewProductChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setNewProduct(prev => ({ ...prev, [name]: value }));
-    };
 
     const handleNewFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;
@@ -99,11 +104,20 @@ const Table = () => {
     };
 
     const handleDelete = async (id: number) => {
-        try {
-            await deleteProduct(id);
-            mutate(); 
-        } catch (error) {
-            console.error("Error deleting product", error);
+        setProductToDelete(id);
+        setIsDeleteModalOpen(true);
+    };
+    const confirmDelete = async () => {
+        if (productToDelete !== null) { 
+            try {
+                await deleteProduct(productToDelete); 
+                mutate(); 
+            } catch (error) {
+                console.error("Error deleting product", error);
+            } finally {
+                setIsDeleteModalOpen(false);  
+                setProductToDelete(null);  
+            }
         }
     };
     if (error) return <p>Error happened</p>;
@@ -127,18 +141,21 @@ const Table = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 <div className='flex gap-[10px] items-center'>
                                 <div className="relative w-12 h-12">
+                                {editingId === product.id ? (
                                     <input
                                         type="file"
                                         name="image"
                                         accept="image/*"
-                                        onChange={(e) => handleFileChange(e, product.id)}
-                                        className="absolute  opacity-0 cursor-pointer"
+                                        onChange={(e) => handleFileChange(e)}
+                                        className="absolute opacity-0 cursor-pointer w-full h-full" style={{border:'1px solid gray'}}
                                     />
+                                ) : (
                                     <img
-                                        src={formValues[product.id]?.previewUrl || product.image}
+                                        src={formValues.previewUrl || product.image}
                                         alt={product.title}
-                                        className="w-full h-full object-cover rounded-full"
+                                        className="w-full h-full object-cover rounded-full border"
                                     />
+                                )}
                                 </div>
                                 {editingId === product.id ? (
                                     <input
@@ -196,7 +213,7 @@ const Table = () => {
                                         name="price"
                                         value={formValues.price}
                                         onChange={handleChange}
-                                        className="border border-gray-300 p-1 rounded w-[50px]"
+                                        className="border border-gray-300 p-1 rounded w-[40px]"
                                     />
                                 ) : (
                                     <div className="flex items-center">
@@ -249,6 +266,27 @@ const Table = () => {
                                         >
                                             Delete
                                         </button>
+                                        {isDeleteModalOpen && (
+                                            <div className="fixed inset-0 z-40  flex justify-center items-center" style={{ backgroundColor: 'rgba(12, 11, 11, 0.1)' }}>
+                                                <div className="bg-white p-6 rounded shadow-lg">
+                                                    <h2 className="text-lg font-bold mb-4">Are you sure you want to delete this product?</h2>
+                                                    <div className="flex justify-end space-x-4">
+                                                        <button
+                                                            onClick={() => setIsDeleteModalOpen(false)}
+                                                            className="px-4 py-2 bg-gray-200 rounded"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button
+                                                            onClick={confirmDelete}
+                                                            className="px-4 py-2 bg-red-500 text-white rounded"
+                                                        >
+                                                            Confirm
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </>
                                 )}
                             </td>
