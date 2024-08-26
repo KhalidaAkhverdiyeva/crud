@@ -77,21 +77,24 @@ const Table = () => {
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;
+        
         if (file) {
-            setFormValues(prevValues => ({
-                ...prevValues,
-                image: file, 
-            }));
-    
             const reader = new FileReader();
+            
             reader.onloadend = () => {
-                setPreviewUrl(reader.result as string); 
+                const result = reader.result as string;
+                setPreviewUrl(result); 
+                setFormValues(prevValues => ({
+                    ...prevValues,
+                    image: result, 
+                }));
             };
+            
             reader.readAsDataURL(file);
         } else {
             setFormValues(prev => ({
                 ...prev,
-                image: null,
+                image: null, 
             }));
             setPreviewUrl(null);
         }
@@ -146,7 +149,7 @@ const Table = () => {
                                         type="file"
                                         name="image"
                                         accept="image/*"
-                                        onChange={(e) => handleFileChange(e)}
+                                        onChange={handleFileChange} 
                                         className="absolute opacity-0 cursor-pointer w-full h-full" style={{border:'1px solid gray'}}
                                     />
                                 ) : (

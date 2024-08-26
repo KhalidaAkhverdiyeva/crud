@@ -37,11 +37,11 @@ const Navbar = () => {
 
     
 
-      const handleViewDetails = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,userId: number) => {
-        event.preventDefault()
-        setSelectedUserId(userId);
-        setIsViewDetailsOpen(true);
-        closeDropdown();
+    const handleViewDetails = (event: React.MouseEvent, userId: number) => {
+      event.preventDefault()
+      setSelectedUserId(userId);
+      setIsViewDetailsOpen(true);
+      closeDropdown();
     };
 
     const closeViewDetailsModal = () => {
